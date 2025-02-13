@@ -9,7 +9,7 @@ import {CONNECT_DB, GET_DB, CLOSE_DB} from '~/config/mongodb'
 import exitHook from 'async-exit-hook'
 import {env} from '~/config/environment'
 import { APIs_V1 } from './routes/v1/'
-
+import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
 const START_SERVER = () => {
   const app = express()
 
@@ -17,6 +17,10 @@ const START_SERVER = () => {
   app.use(express.json())
 
   app.use('/v1', APIs_V1)
+
+  // Xử lý lỗi tập trung (Middleware)
+  app.use(errorHandlingMiddleware)
+
   app.get('/',async (req, res) => {
     // console.log(process.env)
     console.log(await GET_DB().listCollections().toArray())
@@ -27,7 +31,7 @@ const START_SERVER = () => {
     // eslint-disable-next-line no-console
     console.log(`http://${ env.APP_HOST }:${ env.APP_PORT }/`)
   }) 
-  
+  // disconnect DB & exit
   exitHook(() => {
     console.log('DB disconnected ')
     CLOSE_DB
