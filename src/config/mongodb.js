@@ -5,16 +5,11 @@
  */
 // YpojIXQcBcmUzpOy
 import {MongoClient, ServerApiVersion} from 'mongodb'
-
-
-const MONGODB_URI = 'mongodb+srv://trello:YpojIXQcBcmUzpOy@cluster0.iwri3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-
-const DB_NAME='trello-minhat0601'
-
+import { env } from '~/config/environment'
 
 // tao doi tuong instance, mac dinh chua ket noi la null
 let trelloDBInstance = null
-const mongoClientInstace = new MongoClient(MONGODB_URI, {
+const mongoClientInstace = new MongoClient(env.MONGODB_URI, {
     serverApi: {
         version: ServerApiVersion.v1,
         strict: true,
@@ -25,7 +20,7 @@ export const CONNECT_DB = async() => {
     // Goi ket noi toi mongo atlas voi RUI da khai bao
     await mongoClientInstace.connect()
 
-    trelloDBInstance = mongoClientInstace.db(DB_NAME)
+    trelloDBInstance = mongoClientInstace.db(env.DB_NAME)
 }
 
 export const GET_DB = () => {
