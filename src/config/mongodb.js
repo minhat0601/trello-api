@@ -4,12 +4,13 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 // YpojIXQcBcmUzpOy
+import {MongoClient, ServerApiVersion} from 'mongodb'
+
 
 const MONGODB_URI = 'mongodb+srv://trello:YpojIXQcBcmUzpOy@cluster0.iwri3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
 const DB_NAME='trello-minhat0601'
 
-import {MongoClient, ServerApiVersion} from 'mongodb'
 
 // tao doi tuong instance, mac dinh chua ket noi la null
 let trelloDBInstance = null
@@ -32,6 +33,6 @@ export const GET_DB = () => {
     return trelloDBInstance
 }
 
-export const CLOSE_DB = async () =>{
-   return await trelloDBInstance.close()
+export const CLOSE_DB = async () => {
+    return await trelloDBInstance.close()
 }

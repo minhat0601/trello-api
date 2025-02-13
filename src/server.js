@@ -18,7 +18,6 @@ const START_SERVER = () => {
   app.get('/',async (req, res) => {
     console.log(await GET_DB().listCollections().toArray())
     res.end('<h1>Hello World!</h1><hr>')
-    process.exit(0, 'Loi')
   })
   
   app.listen(port, hostname, () => {
