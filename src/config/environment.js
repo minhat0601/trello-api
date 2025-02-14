@@ -12,5 +12,6 @@ export const env = {
     DB_NAME: process.env.DB_NAME,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_USERNAME: process.env.DB_USERNAME,
-    MONGODB_URI: process.env.MONGODB_URI
+    MONGODB_URI: process.env.MONGODB_URI,
+    BUILD_MODE: process.env.BUILD_MODE
 }
