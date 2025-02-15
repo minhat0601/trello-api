@@ -7,7 +7,7 @@
 import Joi from "joi";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "~/utils/ApiError";
-
+import { BOARD_TYPES } from '~/utils/constants'
 const createNew = async (req, res, next) => {
     // Tạo regex
     const correctCondition = Joi.object({
@@ -24,7 +24,8 @@ const createNew = async (req, res, next) => {
             'string.min' : 'Mô tả tối thiểu 3 ký tự',
             'string.max' : 'Mô tả tối đa 255 ký tự',
             'string.trim' : 'Mô tả không được bắt đầu bằng phím cách'
-        })
+        }),
+        type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
     })
 
     try {
@@ -57,7 +58,8 @@ const update = async (req, res, next) => {
             'string.min' : 'Mô tả tối thiểu 3 ký tự',
             'string.max' : 'Mô tả tối đa 255 ký tự',
             'string.trim' : 'Mô tả không được bắt đầu bằng phím cách'
-        })
+        }),
+        type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
     })
 
     try {

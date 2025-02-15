@@ -17,10 +17,7 @@ const createNew = async (req, res, next) => {
         // next to service
         const createdBoard = await new boardService.createNew(req.body)
         // Response
-        res.status(StatusCodes.CREATED).json({
-            messages: 'success',
-            data: createdBoard,
-        })
+        res.status(StatusCodes.CREATED).json(createdBoard)
     } catch (error) {
         next(error)
     }
