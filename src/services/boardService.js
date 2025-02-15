@@ -11,6 +11,7 @@ import { StatusCodes } from "http-status-codes";
 import { slugify } from "~/utils/fomatter";
 import { boardModel } from "~/models/boardModel";
 import ApiError from "~/utils/ApiError";
+import { clone, cloneDeep } from 'lodash'
 const createNew = async (data) => {
     try {
         const newBoard = {
@@ -28,8 +29,15 @@ const createNew = async (data) => {
 const getDetails = async (boardId) => {
     try {
         const result = await boardModel.getDetails(boardId) 
+        const resBoard = cloneDeep(result)
+        // đưa về fomart {board: {columns{cards}}}
+        resBoard.columns.forEach((column) => {
+            column.cards = resBoard.cards.filter((card) => card.columnId.toString() === column._id.toString())
+        })
+        // Xoa mang cards khoi result ban dau
+        delete resBoard.cards
         if (!result) throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
-        return result
+        return resBoard
     } catch (error) {
         throw (error)
     }
