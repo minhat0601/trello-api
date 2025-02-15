@@ -9,7 +9,8 @@
  */
 import { StatusCodes } from "http-status-codes";
 import { slugify } from "~/utils/fomatter";
-
+import { boardModel } from "~/models/boardModel";
+import ApiError from "~/utils/ApiError";
 const createNew = async (data) => {
     try {
         const newBoard = {
@@ -17,13 +18,24 @@ const createNew = async (data) => {
             slug: slugify(data.title)
         }        
 
-        console.log(newBoard)
-        return newBoard 
+        const createdBoard = await boardModel.createNew(newBoard)
+        return await boardModel.findOneById(createdBoard.insertedId) 
     } catch (error) {
         throw error
     }
 }
 
+const getDetails = async (boardId) => {
+    try {
+        const result = await boardModel.getDetails(boardId) 
+        if (!result) throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
+        return result
+    } catch (error) {
+        throw (error)
+    }
+}
+
 export const boardService = {
-    createNew
+    createNew,
+    getDetails
 }
