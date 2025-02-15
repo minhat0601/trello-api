@@ -13,7 +13,10 @@ Router.route('/')
             method: req.method
         })
     })
-    //Route tạo bảng mới
+    //Route tạo bảng mới, validation ngay ở route
     .post(boardValidation.createNew, boardController.createNew)
+
+Router.route('/:id')
+    .get(boardController.getDetails)
 
 export const boardRoute = Router
