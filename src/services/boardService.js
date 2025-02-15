@@ -29,6 +29,7 @@ const createNew = async (data) => {
 const getDetails = async (boardId) => {
     try {
         const result = await boardModel.getDetails(boardId) 
+        if (!result) throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
         const resBoard = cloneDeep(result)
         // đưa về fomart {board: {columns{cards}}}
         resBoard.columns.forEach((column) => {
@@ -36,7 +37,6 @@ const getDetails = async (boardId) => {
         })
         // Xoa mang cards khoi result ban dau
         delete resBoard.cards
-        if (!result) throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
         return resBoard
     } catch (error) {
         throw (error)
