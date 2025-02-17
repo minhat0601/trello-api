@@ -3,15 +3,15 @@
  * YouTube: https://youtube.com/@trungquandev
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
-import Joi from "joi"
-import { ObjectId } from 'mongodb'
+import Joi from 'joi'
+import { ObjectId, ReturnDocument } from 'mongodb'
 // Import pattern để check kiểu dữ liệu ObjectId Dành cho mongoDB
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
-import { GET_DB } from "~/config/mongodb"
+import { GET_DB } from '~/config/mongodb'
 import { BOARD_TYPES } from '~/utils/constants'
-import { columnModel } from "./columnModel"
-import { cardModel } from "./cardModel"
-import ApiError from "~/utils/ApiError"
+import { columnModel } from './columnModel'
+import { cardModel } from './cardModel'
+import ApiError from '~/utils/ApiError'
 // Define colletion (name & schema)
 
 const BOARD_COLLECTION_NAME = 'boards'
@@ -28,7 +28,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
     type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
 })
 
-const validateBeforeCreate = async (data) =>{
+const validateBeforeCreate = async (data) => {
     return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
 }
 
@@ -61,7 +61,7 @@ const getDetails = async (id) => {
         //     _id: new ObjectId(id)
         // })
         const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
-            { 
+            {
                 $match: {
                 _id: new ObjectId(id),
                 _destroy: false
@@ -91,11 +91,26 @@ const getDetails = async (id) => {
         throw new Error(error)
     }
 }
+// Push phần tử vào cuối mảng columnOrderIds trong boards
+const pushColumnOrderIds = async (column) => {
+    try {
+        const rs = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+            { _id: new ObjectId(column.boardId) },
+            { $push: { columnOrderIds: new Object(column._id) } },
+            { ReturnDocument: 'after' }
+        )
+        console.log(column)
+        return rs.value
+    } catch (e) {
+        throw new Error(e)
+    }
+}
 
 export const boardModel = {
     BOARD_COLLECTION_NAME,
     BOARD_COLLECTION_SCHEMA,
     createNew,
     findOneById,
-    getDetails
+    getDetails,
+    pushColumnOrderIds
 }
