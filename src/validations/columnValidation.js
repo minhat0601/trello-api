@@ -31,6 +31,37 @@ const createNew = async (req, res, next) => {
     }
 
 }
+const update = async (req, res, next) => {
+    // Tạo regex
+    const correctCondition = Joi.object({
+        title: Joi.string().min(3).max(50).trim().strict().messages({
+            'any.required' : 'Tên cột là bắt buộc',
+            'string.empty' : 'Tên cột không được để trống',
+            'string.min' : 'Tên cột tối thiểu 3 ký tự',
+            'string.max' : 'Tên cột tối đa 50 ký tự',
+            'string.trim' : 'Tên cột không được bắt đầu bằng phím cách'
+        }),
+        // boardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+        cardOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+
+    })
+
+    try {
+        // Kiểm tra dữ liệu FE gửi lên thông qua Joia
+        // abortEarly: false để đợi validate tất cả các trường
+        await correctCondition.validateAsync(req.body, {
+            abortEarly: false,
+            allowUnknown: true
+        })
+        // Sau khi validate xong thi qua controller
+        next()
+
+    } catch (error) {
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+    }
+
+}
 export const columnValidation = {
-    createNew
+    createNew,
+    update
 }

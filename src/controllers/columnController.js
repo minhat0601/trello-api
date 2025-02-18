@@ -22,7 +22,21 @@ const getDetails = async (req, res, next) => {
         next(e)
     }
 }
+
+const update = async (req, res, next) => {
+    try {
+        const columnId = req.params.id
+        const data = req.body
+        console.log(req.body)
+        const updated = await new columnService.update(columnId, data)
+        res.status(StatusCodes.CREATED).json(updated)
+    } catch (error) {
+        next(error)
+    }
+
+}
 export const columnController = {
     createNew,
-    getDetails
+    getDetails,
+    update
 }
