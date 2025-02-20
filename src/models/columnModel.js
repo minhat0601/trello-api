@@ -9,8 +9,8 @@ import Joi from 'joi'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { GET_DB } from '~/config/mongodb'
 import { ObjectId } from 'mongodb'
-import { boardModel } from './boardModel'
 
+const INVALID_UPDATE_FIELDS =['_id', 'createdAt', 'boardId']
 // Define Collection (name & schema)
 const COLUMN_COLLECTION_NAME = 'columns'
 const COLUMN_COLLECTION_SCHEMA = Joi.object({
@@ -72,7 +72,8 @@ const pushCardOrderIds = async (card) => {
 
 const update = async (columnId, data) => {
     try {
-        const rs = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+            
+            const rs = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
             { _id: new ObjectId(columnId) },
             { $set: data },
             { ReturnDocument: 'after' }
