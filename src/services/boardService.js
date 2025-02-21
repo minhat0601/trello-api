@@ -2,7 +2,10 @@ import { StatusCodes } from 'http-status-codes'
 import { slugify } from '~/utils/fomatter'
 import { boardModel } from '~/models/boardModel'
 import ApiError from '~/utils/ApiError'
-import { clone, cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash'
+import { columnModel } from '~/models/columnModel'
+import { cardModel } from '~/models/cardModel'
+import { ObjectId } from 'mongodb'
 const createNew = async (data) => {
     try {
         const newBoard = {
@@ -33,20 +36,43 @@ const getDetails = async (boardId) => {
         throw (error)
     }
 }
-const update = async (boardId, reqBody) => {
+
+const update = async (boarId, data) => {
     try {
         const updateData = {
-            ...reqBody,
+            ...data,
             updatedAt: Date.now()
         }
-        const updatedBoard = await boardModel.update(boardId, updateData)
-        return updatedBoard
+        return await boardModel.update( boarId, updateData)
     } catch (error) {
-        throw (error)
+        throw error
+    }
+}
+
+const moveCardDifferentColumn = async (reqBody) => {
+    try {
+        await columnModel.update(reqBody.prevColumnId, {
+            cardOrderIds: reqBody.prevCardOrderIds,
+            updateAt: Date.now()
+        })
+        await columnModel.update(reqBody.nextColumnId, {
+            cardOrderIds: reqBody.nextCardOrderIds,
+            updateAt: Date.now()
+        })
+        await cardModel.update(reqBody.currentCardId, {
+            columnId: reqBody.nextColumnId,
+            updateAt: Date.now()
+        })
+        return {
+            updateResult: 'successfully'
+        }
+    } catch (error) {
+        throw error
     }
 }
 export const boardService = {
     createNew,
     getDetails,
+    moveCardDifferentColumn,
     update
 }

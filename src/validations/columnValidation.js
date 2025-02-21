@@ -41,17 +41,14 @@ const update = async (req, res, next) => {
             'string.max' : 'Tên cột tối đa 50 ký tự',
             'string.trim' : 'Tên cột không được bắt đầu bằng phím cách'
         }),
-        // boardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
         cardOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
-
     })
 
     try {
         // Kiểm tra dữ liệu FE gửi lên thông qua Joia
         // abortEarly: false để đợi validate tất cả các trường
         await correctCondition.validateAsync(req.body, {
-            abortEarly: false,
-            allowUnknown: true
+            abortEarly: false
         })
         // Sau khi validate xong thi qua controller
         next()

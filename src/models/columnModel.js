@@ -8,7 +8,8 @@ import Joi from 'joi'
 // Import pattern để check kiểu dữ liệu ObjectId Dành cho mongoDB
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { GET_DB } from '~/config/mongodb'
-import { ObjectId } from 'mongodb'
+import { ObjectId, ReturnDocument } from 'mongodb'
+import { boardModel } from './boardModel'
 
 const INVALID_UPDATE_FIELDS =['_id', 'createdAt', 'boardId']
 // Define Collection (name & schema)
@@ -26,7 +27,7 @@ const COLUMN_COLLECTION_SCHEMA = Joi.object({
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
-
+// Cac truong ko duoc update
 const validateBeforeCreate = async (data) => {
     return await COLUMN_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
 }
@@ -72,16 +73,22 @@ const pushCardOrderIds = async (card) => {
 
 const update = async (columnId, data) => {
     try {
-            
-            const rs = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
-            { _id: new ObjectId(columnId) },
-            { $set: data },
-            { ReturnDocument: 'after' }
+        Object.keys(data).map(key => {
+            if (INVALID_UPDATE_FIELDS.includes(key)) {
+                delete data[key]
+            }
+        })
+        if (data.cardOrderIds) {
+            data.cardOrderIds = data.cardOrderIds.map((id) => new ObjectId(id))
+        }
+        const rs = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+            {_id: new ObjectId(columnId)},
+            {$set: data},
+            {returnDocument: 'after'}
         )
-        // console.log(data)
         return rs
-    } catch (e) {
-        throw new Error(e)
+    } catch (error) {
+        throw new Error(error)
     }
 }
 export const columnModel = {

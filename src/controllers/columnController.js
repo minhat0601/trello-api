@@ -26,10 +26,9 @@ const getDetails = async (req, res, next) => {
 const update = async (req, res, next) => {
     try {
         const columnId = req.params.id
-        const data = req.body
-        console.log(req.body)
-        const updated = await new columnService.update(columnId, data)
-        res.status(StatusCodes.CREATED).json(updated)
+        const updateData = req.body
+        const updatedData = await columnService.update(columnId, updateData)
+        res.status(StatusCodes.OK).json(updatedData)
     } catch (error) {
         next(error)
     }

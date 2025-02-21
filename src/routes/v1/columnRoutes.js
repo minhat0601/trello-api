@@ -20,4 +20,5 @@ Router.route('/:id')
     .get(columnController.getDetails)
     .put(columnValidation.update, columnController.update)
 
+
 export const columnRoute = Router

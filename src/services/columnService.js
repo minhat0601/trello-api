@@ -30,9 +30,8 @@ const update = async (columnId, data) => {
             ...data,
             updatedAt: Date.now()
         }
-        const updatedData = await columnModel.update(columnId, newColumn)
-        // console.log(updatedData)
-        return updatedData
+
+        return await columnModel.update(columnId, newColumn)
     } catch (error) {
         throw error
     }
@@ -41,5 +40,4 @@ const update = async (columnId, data) => {
 export const columnService = {
     createNew,
     update
-
 }

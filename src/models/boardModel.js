@@ -14,6 +14,7 @@ import { cardModel } from './cardModel'
 import { ReturnDocument } from 'mongodb'
 // Define colletion (name & schema)
 
+const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']  // Các trường không được update
 const BOARD_COLLECTION_NAME = 'boards'
 const BOARD_COLLECTION_SCHEMA = Joi.object({
     title: Joi.string().min(3).max(50).required().trim().strict(),
@@ -27,7 +28,6 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
     _destroy: Joi.boolean().default(false),
     type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
 })
-const INVALID_UPDATE_FIELDS =['_id', 'createdAt']
 
 const validateBeforeCreate = async (data) => {
     return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
