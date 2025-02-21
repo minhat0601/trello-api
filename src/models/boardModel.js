@@ -4,16 +4,17 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 import Joi from 'joi'
-import { ObjectId, ReturnDocument } from 'mongodb'
+import { ObjectId } from 'mongodb'
 // Import pattern để check kiểu dữ liệu ObjectId Dành cho mongoDB
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { GET_DB } from '~/config/mongodb'
 import { BOARD_TYPES } from '~/utils/constants'
 import { columnModel } from './columnModel'
 import { cardModel } from './cardModel'
-import ApiError from '~/utils/ApiError'
+import { ReturnDocument } from 'mongodb'
 // Define colletion (name & schema)
 
+const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']  // Các trường không được update
 const BOARD_COLLECTION_NAME = 'boards'
 const BOARD_COLLECTION_SCHEMA = Joi.object({
     title: Joi.string().min(3).max(50).required().trim().strict(),
@@ -85,7 +86,6 @@ const getDetails = async (id) => {
                 }
             }
         ]).toArray()
-        console.log(result)
         return result[0] || null
     } catch (error) {
         throw new Error(error)
@@ -99,8 +99,25 @@ const pushColumnOrderIds = async (column) => {
             { $push: { columnOrderIds: new Object(column._id) } },
             { ReturnDocument: 'after' }
         )
-        console.log(column)
-        return rs.value
+        return rs
+    } catch (e) {
+        throw new Error(e)
+    }
+}
+const update = async (boardId, data) => {
+    try {
+        // kiểm tra xem có update các cột khác hay không
+        Object.keys(data).forEach(fieldName => {
+            if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
+                delete data[fieldName]
+            }
+        })
+        const rs = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+            { _id: new ObjectId(boardId) },
+            { $set: data},
+            { ReturnDocument: 'after' }
+        )
+        return rs
     } catch (e) {
         throw new Error(e)
     }
@@ -112,5 +129,6 @@ export const boardModel = {
     createNew,
     findOneById,
     getDetails,
-    pushColumnOrderIds
+    pushColumnOrderIds,
+    update
 }

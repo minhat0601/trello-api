@@ -18,5 +18,10 @@ Router.route('/')
 
 Router.route('/:id')
     .get(boardController.getDetails)
+    .put(boardValidation.update, boardController.update)
+
+// Route hỗ trợ di chuyển card giữa các column trong một board
+Router.route('/supports/moving-card')
+    .put(boardValidation.moveCardDifferentColumn, boardController.moveCardDifferentColumn)
 
 export const boardRoute = Router

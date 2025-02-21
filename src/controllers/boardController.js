@@ -4,6 +4,7 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 import { StatusCodes } from 'http-status-codes'
+import { boardModel } from '~/models/boardModel'
 import { boardService } from '~/services/boardService'
 const createNew = async (req, res, next) => {
     try {
@@ -23,6 +24,17 @@ const createNew = async (req, res, next) => {
     }
 
 }
+const update = async (req, res, next) => {
+    try {
+        const boardId = req.params.id
+        const data = req.body   
+        const updatedBoard = await boardService.update(boardId, data)
+        res.status(StatusCodes.OK).json(updatedBoard)
+    } catch (error) {
+        next(error)
+    }
+
+}
 
 const getDetails = async (req, res, next) => {
     try {
@@ -34,7 +46,18 @@ const getDetails = async (req, res, next) => {
         next(e)
     }
 }
+
+const moveCardDifferentColumn = async (req, res, next) =>{
+    try {
+        const rs = await boardService.moveCardDifferentColumn(req.body)
+        res.status(StatusCodes.OK).json(rs)
+    } catch (error) {
+        next(error)
+    }
+}
 export const boardController = {
     createNew,
-    getDetails
+    getDetails,
+    moveCardDifferentColumn,
+    update
 }
