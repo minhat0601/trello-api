@@ -33,7 +33,7 @@ const START_SERVER = () => {
   if (env.NODE_ENV === 'production') {
     app.listen(process.env.PORT, () => {
       // eslint-disable-next-line no-console
-      console.log(`http://${ process.env.APP_HOST }:${ process.env.APP_PORT }/`)
+      console.log(`${ process.env.APP_HOST }:${ process.env.APP_PORT }`)
     })
   } else {
       app.listen(env.APP_PORT, env.APP_HOST, () => {
