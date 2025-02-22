@@ -30,7 +30,7 @@ const START_SERVER = () => {
     console.log(await GET_DB().listCollections().toArray())
     res.end('<h1>Hello World!</h1><hr>')
   })
-  if (env.NODE_ENV === 'production') {
+  if (env.BUILD_MODE === 'production') {
     app.listen(process.env.PORT, () => {
       // eslint-disable-next-line no-console
       console.log(`${ process.env.APP_HOST }:${ process.env.APP_PORT }`)
