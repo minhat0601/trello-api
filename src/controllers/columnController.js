@@ -34,8 +34,19 @@ const update = async (req, res, next) => {
     }
 
 }
+const deleteColumn = async (req, res, next) => {
+    try {
+        const columnId = req.params.id
+        const deletedData = await columnService.deleteColumn(columnId)
+        res.status(StatusCodes.OK).json(deletedData)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const columnController = {
     createNew,
     getDetails,
-    update
+    update,
+    deleteColumn
 }

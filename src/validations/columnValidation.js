@@ -58,7 +58,24 @@ const update = async (req, res, next) => {
     }
 
 }
+const deleteColumn =  async (req, res, next) => {
+    const correctCondition = Joi.object({
+        id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    })
+
+    try {
+        // Kiểm tra dữ liệu FE gửi lên thông qua Joi
+        // abortEarly: false để đợi validate tất cả các trường
+        await correctCondition.validateAsync(req.params)
+        // Sau khi validate xong thi qua controller
+        next()
+
+    } catch (error) {
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+    }
+}
 export const columnValidation = {
     createNew,
-    update
+    update, 
+    deleteColumn
 }
