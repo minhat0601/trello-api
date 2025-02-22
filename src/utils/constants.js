@@ -4,8 +4,8 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 export const WHITELIST_DOMAINS = [
-    'http://localhost:5173',
-    'https://trello-fe-gamma.vercel.app/'
+    // 'http://localhost:5173',
+    'https://trello-fe-gamma.vercel.app'
 ]
 export const BOARD_TYPES = {
     PUBLIC: 'public',
