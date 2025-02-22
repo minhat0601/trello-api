@@ -11,7 +11,6 @@ import { GET_DB } from '~/config/mongodb'
 import { BOARD_TYPES } from '~/utils/constants'
 import { columnModel } from './columnModel'
 import { cardModel } from './cardModel'
-import { ReturnDocument } from 'mongodb'
 // Define colletion (name & schema)
 
 const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']  // Các trường không được update
@@ -71,8 +70,19 @@ const getDetails = async (id) => {
             {
                 $lookup: {
                     from: columnModel.COLUMN_COLLECTION_NAME,
-                    localField: '_id',
-                    foreignField: 'boardId',
+                    let: { board_id: '$_id' },
+                    pipeline: [
+                        { $match:
+                            { $expr:
+                                { $and:
+                                    [
+                                        { $eq: [ '$boardId', '$$board_id' ] },
+                                        { $eq: [ '$_destroy', false ] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
                     as: 'columns'
                 }
 
@@ -123,6 +133,18 @@ const update = async (boardId, data) => {
     }
 }
 
+const pullColumnOrderIds = async (column) => {
+    try {
+        const rs = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+            { _id: new ObjectId(column.boardId) },
+            { $pull: { columnOrderIds: new Object(column._id) } },
+            { ReturnDocument: 'after' }
+        )
+        return rs
+    } catch (e) {
+        throw new Error(e)
+    }
+}
 export const boardModel = {
     BOARD_COLLECTION_NAME,
     BOARD_COLLECTION_SCHEMA,
@@ -130,5 +152,6 @@ export const boardModel = {
     findOneById,
     getDetails,
     pushColumnOrderIds,
-    update
+    update,
+    pullColumnOrderIds
 }

@@ -30,11 +30,17 @@ const START_SERVER = () => {
     console.log(await GET_DB().listCollections().toArray())
     res.end('<h1>Hello World!</h1><hr>')
   })
-  
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    // eslint-disable-next-line no-console
-    console.log(`http://${ env.APP_HOST }:${ env.APP_PORT }/`)
-  }) 
+  if (env.NODE_ENV === 'production') {
+    app.listen(process.env.PORT, () => {
+      // eslint-disable-next-line no-console
+      console.log(`http://${ env.APP_HOST }:${ env.APP_PORT }/`)
+    })
+  } else {
+      app.listen(env.APP_PORT, env.APP_HOST, () => {
+        // eslint-disable-next-line no-console
+        console.log(`http://${ env.APP_HOST }:${ env.APP_PORT }/`)
+      })
+    }
   // disconnect DB & exit
   exitHook(() => {
     console.log('DB disconnected ')
