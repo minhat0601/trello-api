@@ -12,9 +12,16 @@ import exitHook from 'async-exit-hook'
 import {env} from '~/config/environment'
 import { APIs_V1 } from './routes/v1/'
 import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
+import cookieParse from 'cookie-parser'
 const START_SERVER = () => {
   const app = express()
 
+  app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store')
+    next()
+  })
+  // Cookie-parser config
+  app.use(cookieParse())
   // Xử lý cors
   app.use(cors(corsOptions))
   // enable req.body data

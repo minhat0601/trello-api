@@ -49,7 +49,7 @@ const deleteColumn = async (columnId) => {
         await cardModel.deleteManyByColumnId(columnId)
         // Sắp xếp lại OrderColumnId trong board
         await boardModel.pullColumnOrderIds(column)
-        return { result: 'Xoá cột thành công', column}
+        return { result:'success', message: 'Xoá cột thành công', column}
     } catch (error) {
         throw error
     }
